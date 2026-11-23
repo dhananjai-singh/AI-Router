@@ -1,4 +1,4 @@
-# ai-router
+# AI Router
 
 A unified AI CLI that routes coding tasks to Gemini CLI or Claude Code using **Qwen3 running locally via Ollama**.
 
@@ -47,8 +47,8 @@ you → ai "task" → Qwen3 (local, Ollama) → gemini | claude | hybrid → res
 ## Installation
 
 ```bash
-git clone https://github.com/dhananjai-singh/Router.git
-cd Router
+git clone https://github.com/dhananjai-singh/AI-Router.git
+cd AI-Router
 chmod +x install.sh
 ./install.sh
 ```
