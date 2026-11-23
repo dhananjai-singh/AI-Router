@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Gate - Premium AI Router Authentication</title>
+  <meta name="description" content="Secure, high-performance authentication portal for the Nexus AI CLI Router. Authenticate to manage configurations and models.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styling -->
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Dynamic Glowing Background Orbs -->
+  <div class="glow-container">
+    <div class="glow-orb glow-orb-1" id="orb-1"></div>
+    <div class="glow-orb glow-orb-2" id="orb-2"></div>
+    <div class="glow-orb glow-orb-3" id="orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Main Auth Card -->
+    <main class="auth-card" id="auth-main-card">
+      
+      <!-- Brand Header -->
+      <header class="brand-header">
+        <div class="brand-logo" id="brand-logo-icon">
+          <!-- Abstract SVG logo representing a router node -->
+          <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="logo-svg">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <h1 class="brand-title" id="portal-title">NEXUS GATEWAY</h1>
+        <p class="brand-subtitle" id="portal-subtitle">Unified AI CLI Router Authentication</p>
+      </header>
+
+      <!-- Status/Notification Banner -->
+      <div class="alert-banner hidden" id="status-alert-banner">
+        <span class="alert-icon" id="status-alert-icon"></span>
+        <span class="alert-message" id="status-alert-text"></span>
+      </div>
+
+      <!-- Auth Forms Area -->
+      <div class="forms-wrapper">
+        
+        <!-- LOGIN FORM -->
+        <form id="login-auth-form" class="auth-form active-form" novalidate>
+          <div class="form-title-area">
+            <h2>Sign In</h2>
+            <p>Access your CLI developer session</p>
+          </div>
+
+          <div class="input-group">
+            <div class="input-field-container">
+              <input type="email" id="login-email-input" class="auth-input-field" required placeholder=" ">
+              <label for="login-email-input" class="floating-label">Email Address</label>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              </span>
+            </div>
+            <div class="error-msg" id="login-email-error"></div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-field-container">
+              <input type="password" id="login-password-input" class="auth-input-field" required placeholder=" ">
+              <label for="login-password-input" class="floating-label">Password</label>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </span>
+              <button type="button" id="login-password-toggle" class="password-toggle-btn" aria-label="Toggle Password Visibility">
+                <svg class="eye-show" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-hide hidden" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+            <div class="error-msg" id="login-password-error"></div>
+          </div>
+
+          <div class="form-actions-row">
+            <label class="checkbox-container" id="login-remember-container">
+              <input type="checkbox" id="login-remember-checkbox">
+              <span class="checkmark"></span>
+              Remember me
+            </label>
+            <a href="#" class="forgot-link" id="login-forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" id="login-submit-button" class="btn btn-primary submit-btn">
+            <span class="btn-text">Authenticate Session</span>
+            <span class="loader hidden" id="login-loader"></span>
+          </button>
+
+          <p class="form-switch-prompt">
+            New developer? <button type="button" class="switch-link-btn" id="go-to-register">Create an account</button>
+          </p>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="register-auth-form" class="auth-form hidden-form" novalidate>
+          <div class="form-title-area">
+            <h2>Register Developer</h2>
+            <p>Setup a new local profile credentials</p>
+          </div>
+
+          <div class="name-row">
+            <div class="input-group">
+              <div class="input-field-container">
+                <input type="text" id="register-first-name-input" class="auth-input-field" required placeholder=" ">
+                <label for="register-first-name-input" class="floating-label">First Name</label>
+              </div>
+              <div class="error-msg" id="register-first-name-error"></div>
+            </div>
+
+            <div class="input-group">
+              <div class="input-field-container">
+                <input type="text" id="register-last-name-input" class="auth-input-field" required placeholder=" ">
+                <label for="register-last-name-input" class="floating-label">Last Name</label>
+              </div>
+              <div class="error-msg" id="register-last-name-error"></div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-field-container">
+              <input type="email" id="register-email-input" class="auth-input-field" required placeholder=" ">
+              <label for="register-email-input" class="floating-label">Email Address</label>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              </span>
+            </div>
+            <div class="error-msg" id="register-email-error"></div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-field-container">
+              <input type="password" id="register-password-input" class="auth-input-field" required placeholder=" ">
+              <label for="register-password-input" class="floating-label">Password</label>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </span>
+              <button type="button" id="register-password-toggle" class="password-toggle-btn" aria-label="Toggle Password Visibility">
+                <svg class="eye-show" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-hide hidden" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+            
+            <!-- Password Strength Bar -->
+            <div class="password-strength-container" id="pass-strength-meter-box">
+              <div class="strength-bar-bg">
+                <div class="strength-bar-progress" id="password-strength-progress"></div>
+              </div>
+              <span class="strength-label" id="password-strength-label">Password Strength</span>
+            </div>
+            
+            <div class="error-msg" id="register-password-error"></div>
+          </div>
+
+          <div class="input-group">
+            <div class="checkbox-container" id="register-terms-container">
+              <input type="checkbox" id="register-terms-checkbox" required>
+              <span class="checkmark"></span>
+              <label for="register-terms-checkbox">I agree to local security policies & logging</label>
+            </div>
+            <div class="error-msg" id="register-terms-error"></div>
+          </div>
+
+          <button type="submit" id="register-submit-button" class="btn btn-primary submit-btn">
+            <span class="btn-text">Register Account</span>
+            <span class="loader hidden" id="register-loader"></span>
+          </button>
+
+          <p class="form-switch-prompt">
+            Already registered? <button type="button" class="switch-link-btn" id="go-to-login">Sign in here</button>
+          </p>
+        </form>
+
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer-note" id="gate-footer">
+    <p>&copy; 2026 Nexus Router System. Operating with sandboxed secure local nodes.</p>
+  </footer>
+
+  <!-- JS Logic -->
+  <script src="/app.js"></script>
+</body>
+</html>

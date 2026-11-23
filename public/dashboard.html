@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Gate - Developer Dashboard</title>
+  <meta name="description" content="Dashboard for the Nexus AI CLI Router. View history, check model routing status, and configure credentials.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styling (Shared + Local overrides) -->
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Dashboard specific layout overrides */
+    .dashboard-layout {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      z-index: 10;
+      position: relative;
+    }
+    
+    .sidebar {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: var(--border-radius-lg);
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar-user {
+      text-align: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 24px;
+    }
+    
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+    }
+    
+    .user-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .user-role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--accent-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .nav-item-btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      background: none;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius-md);
+      color: var(--text-secondary);
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition-fast);
+    }
+    
+    .nav-item-btn:hover, .nav-item-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--card-border-active);
+    }
+    
+    .nav-item-btn.active {
+      border-color: var(--accent-secondary);
+      background: rgba(6, 182, 212, 0.05);
+    }
+    
+    .sidebar-footer {
+      margin-top: 50px;
+    }
+    
+    .logout-btn {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+    
+    .logout-btn:hover {
+      background: var(--color-error);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+      transform: translateY(-2px);
+    }
+    
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .content-header h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    
+    .content-header p {
+      font-family: var(--font-sub);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: var(--transition-fast);
+    }
+    
+    .stat-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-2px);
+    }
+    
+    .stat-title {
+      font-family: var(--font-sub);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    
+    .stat-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    /* Log table section */
+    .history-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-sub);
+      font-size: 0.9rem;
+      text-align: left;
+    }
+    
+    .log-table th {
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+    
+    .log-table td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+    
+    .log-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .route-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: monospace;
+    }
+    
+    .badge-gemini {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-secondary);
+    }
+    
+    .badge-claude {
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      color: var(--accent-primary);
+    }
+    
+    .badge-hybrid {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--color-warning);
+    }
+    
+    .timestamp-col {
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    
+    .confidence-col {
+      font-weight: 600;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state svg {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 968px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dynamic Glowing Background Orbs -->
+  <div class="glow-container">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+  </div>
+
+  <div class="app-container" style="max-width: 1400px; padding: 40px 20px; align-items: flex-start;">
+    
+    <div class="dashboard-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-user">
+          <div class="user-avatar" id="sidebar-user-avatar">N</div>
+          <h2 class="user-name" id="sidebar-user-fullname">Loading...</h2>
+          <span class="user-role-badge" id="sidebar-user-role">Developer</span>
+        </div>
+        
+        <nav>
+          <ul class="nav-menu">
+            <li>
+              <button class="nav-item-btn active" id="menu-btn-overview">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                Overview
+              </button>
+            </li>
+            <li>
+              <button class="nav-item-btn" id="menu-btn-settings">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Node Settings
+              </button>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <button class="btn logout-btn" id="dashboard-logout-button">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" style="margin-right:8px; vertical-align:middle;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN PANEL -->
+      <main class="main-content">
+        
+        <!-- Header -->
+        <header class="content-header">
+          <div>
+            <h1 id="welcome-message-header">Welcome, Developer</h1>
+            <p id="dashboard-time-badge">Session active</p>
+          </div>
+          <div class="user-role-badge" id="system-status-indicator" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: var(--color-success);">
+            SYSTEM ONLINE
+          </div>
+        </header>
+
+        <!-- Stats row -->
+        <section class="stats-grid">
+          
+          <div class="stat-card">
+            <div class="stat-title">Total CLI Queries</div>
+            <div class="stat-value" id="stats-total-queries">0</div>
+            <div class="stat-desc">Executed router actions</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-title">Primary Router</div>
+            <div class="stat-value" id="stats-primary-route" style="color: var(--accent-secondary);">Qwen3</div>
+            <div class="stat-desc">Local Ollama Model</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Connected Nodes</div>
+            <div class="stat-value" style="color: var(--color-success);">2 / 2</div>
+            <div class="stat-desc">Gemini CLI & Claude Code</div>
+          </div>
+
+        </section>
+
+        <!-- Logs / History Section -->
+        <section class="history-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" style="vertical-align: middle;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Recent Routing History
+          </div>
+
+          <div class="table-container">
+            <table class="log-table" id="routing-history-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Route Model</th>
+                  <th>Task Instruction</th>
+                  <th>Confidence</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <tr>
+                  <td colspan="4" class="empty-state">Loading history...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+  </div>
+
+  <footer class="footer-note" style="margin-top: 50px;">
+    <p>&copy; 2026 Nexus Router System. Secured with JWT Sessions.</p>
+  </footer>
+
+  <!-- Dashboard JavaScript logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const sidebarUserAvatar = document.getElementById("sidebar-user-avatar");
+      const sidebarUserFullname = document.getElementById("sidebar-user-fullname");
+      const sidebarUserRole = document.getElementById("sidebar-user-role");
+      const welcomeHeader = document.getElementById("welcome-message-header");
+      const logoutBtn = document.getElementById("dashboard-logout-button");
+      
+      const statsTotalQueries = document.getElementById("stats-total-queries");
+      const historyTableBody = document.getElementById("history-table-body");
+
+      // Check authorization
+      let currentUser = null;
+      try {
+        const response = await fetch("/api/auth/me");
+        if (!response.ok) {
+          throw new Error("Unauthorized access");
+        }
+        const data = await response.json();
+        currentUser = data.user;
+        
+        // Populate User UI
+        const fullName = `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() || currentUser.email;
+        sidebarUserFullname.textContent = fullName;
+        sidebarUserAvatar.textContent = (currentUser.firstName || currentUser.email || "N")[0].toUpperCase();
+        sidebarUserRole.textContent = currentUser.role || "developer";
+        welcomeHeader.textContent = `Welcome, ${currentUser.firstName || "Developer"}`;
+        
+      } catch (err) {
+        console.error("Auth check failed:", err.message);
+        // Redirect to login
+        window.location.href = "/index.html";
+        return;
+      }
+
+      // Fetch Routing History
+      async function loadHistory() {
+        try {
+          const response = await fetch("/api/router/history");
+          if (!response.ok) {
+            throw new Error("Failed to fetch history");
+          }
+          const data = await response.json();
+          const entries = data.history || [];
+          
+          statsTotalQueries.textContent = entries.length;
+          
+          if (entries.length === 0) {
+            historyTableBody.innerHTML = `
+              <tr>
+                <td colspan="4" class="empty-state">
+                  <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="2" fill="none" style="display:block; margin: 0 auto 10px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  No CLI sessions found yet. Run 'ai "your task"' in your terminal!
+                </td>
+              </tr>
+            `;
+            return;
+          }
+          
+          // Render entries
+          historyTableBody.innerHTML = "";
+          // Sort entries from newest to oldest
+          const sortedEntries = [...entries].reverse();
+          
+          sortedEntries.forEach((entry) => {
+            const tr = document.createElement("tr");
+            
+            // Format time
+            const timestamp = entry.timestamp ? new Date(entry.timestamp).toLocaleString() : "N/A";
+            
+            // Route badge style
+            let badgeClass = "badge-hybrid";
+            let modelLabel = entry.model || "Unknown";
+            if (modelLabel === "gemini") {
+              badgeClass = "badge-gemini";
+              modelLabel = "Gemini CLI";
+            } else if (modelLabel === "claude") {
+              badgeClass = "badge-claude";
+              modelLabel = "Claude Code";
+            } else if (modelLabel.includes("gemini") && modelLabel.includes("claude")) {
+              badgeClass = "badge-hybrid";
+              modelLabel = modelLabel.replace("_then_", " → ");
+            }
+            
+            // Confidence percentage
+            const confidencePct = entry.confidence ? `${Math.round(entry.confidence * 100)}%` : "N/A";
+            
+            tr.innerHTML = `
+              <td class="timestamp-col">${timestamp}</td>
+              <td><span class="route-badge ${badgeClass}">${modelLabel}</span></td>
+              <td style="max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(entry.task)}">${escapeHtml(entry.task)}</td>
+              <td class="confidence-col">${confidencePct}</td>
+            `;
+            
+            historyTableBody.appendChild(tr);
+          });
+          
+        } catch (err) {
+          console.error("Error loading router history:", err.message);
+          historyTableBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="empty-state" style="color:var(--color-error)">
+                Failed to load routing history logs.
+              </td>
+            </tr>
+          `;
+        }
+      }
+
+      function escapeHtml(text) {
+        if (!text) return "";
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // Load data
+      await loadHistory();
+
+      // Logout handler
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          const response = await fetch("/api/auth/logout", { method: "POST" });
+          if (response.ok) {
+            window.location.href = "/index.html";
+          }
+        } catch (err) {
+          console.error("Logout failed:", err.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

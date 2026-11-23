@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "6a21bb19543e979978c1215b",
+    "email": "test@example.com",
+    "passwordHash": "$2b$10$tprRc1nj7u79scw4qI31zuvMmevo2sDLPBiPYQYBm49boQC8yjFde",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "user",
+    "status": "active",
+    "createdAt": "2026-06-04T17:51:21.374Z",
+    "updatedAt": "2026-06-04T17:51:21.374Z"
+  },
+  {
+    "_id": "6a21bce989f81ba32cf35ac2",
+    "email": "dev-1780595945563@example.com",
+    "passwordHash": "$2b$10$sA9hcnxk5y2N9Jj3OF0GbOczcyduuSwlZllkzHygdSxbXxZq4seaK",
+    "firstName": "Test",
+    "lastName": "Developer",
+    "role": "user",
+    "status": "active",
+    "createdAt": "2026-06-04T17:59:05.678Z",
+    "updatedAt": "2026-06-04T17:59:05.679Z"
+  }
+]
